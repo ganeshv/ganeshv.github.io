@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title>Gutenberg — Meaningful Web Typography Starter Kit</title>
+  <link rel="stylesheet" href="stylesheets/combined.css">
+  <link rel="stylesheet" href="stylesheets/blockchain.css">
+  <link href='https://fonts.googleapis.com/css?family=Merriweather:400,700,400italic' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <article>
+    <h1>Blockchains in 5 minutes</h1>
+    <p class="attention-grabber">A short guide to develop an intuition for what blockchains are and how they work. Basic exposure to git, hashing algorithms assumed.</p>
+
+    <p>
+A blockchain is an immutable public transaction log. Nameless, untrusted participants can append valid blocks of transactions to the end of the blockchain, without any central authority. One way to think of blockchains is by analogy to torrents: BitTorrent lets us distribute fixed content like movies and ISOs via a swarm of untrusted peers. The blockchain is a kind of <em>appendable torrent</em>.  This - like the infinite improbability drive - was considered <i>almost</i> impossible. Then one day young Satoshi brewed a fresh cup of really hot tea...
+    </p>
+
+    <p>
+Let us sidle up to blockchains by considering how a typical open-source project works. It has a git repository, a mailing list, a benevolent dictator-for-life (BDFL) and a community. Standard operating procedure for project evolution:
+    </p>
+    <ul>
+    <li>Contributors send out patches to the mailing list.</li>
+    <li>The BDFL collects outstanding patches, verifies them, batches all valid patches into a commit, pushes to git repo.</li>
+    <li>Everybody pulls the new commit.</li>
+    </ul>
+
+    <p>
+Because this is git, every participant has their own copy of the repo with the entire commit history. Each commit is identified by <i>hash(commit contents + parent commit-id)</i>. This makes commit history immutable. The very name of the latest commit depends on its entire ancestry. Everybody knows the rules for what is considered valid code (it must pass the regression tests, etc.), so each community member can independently verify the validity of patches and the commit history.
+    </p>
+
+    <div class="blockchain">
+        <div class="gitblock">
+            <div class="blockname" title="dljnjn"><strong>ID: </strong>4893483948474743797878787879898</div>
+            <div class="blockparent" title="knskjnv"><strong>Parent: </strong>57485748</div>
+            <textarea></textarea>
+        </div>
+        <div class="blockarrow">&#8594;</div>
+        <div class="gitblock">
+            <div class="blockname" title="dljnjn">4893483948</div>
+            <div class="blockparent" title="knskjnv">57485748</div>
+            <textarea></textarea>
+        </div>
+        <div class="blockarrow">&#8594;</div>
+        <div class="gitblock">
+            <div class="blockname" title="dljnjn">4893483948</div>
+            <div class="blockparent" title="knskjnv">57485748</div>
+            <textarea></textarea>
+        </div>
+        <div class="blockarrow">&#8594;</div>
+        <div class="gitblock">
+            <div class="blockname" title="dljnjn">4893483948</div>
+            <div class="blockparent" title="knskjnv">57485748</div>
+            <textarea></textarea>
+        </div>
+    </div>
+    <p><em>Try changing the contents of the block above</em></p>
+    <p>
+So there are limits to the BDFL's power: they cannot change history, they cannot commit spurious patches without everyone noticing. They can, however, simply ignore someone's patches out of spite.
+    </p>
+    <p>
+    Now onto the blockchain.
+    </p>
+    <ul>
+    <li>The blockchain is very like a git repo with a single branch. Transactions are batched into blocks, just as patches were batched into commits. Like commits, blocks are identified by block-ids derived from <i>hash(block contents + parent block-id)</i>.</li>
+    <li>There is a P2P network ("mailing list") where participants announce new transactions for incorporation into a block.</li>
+    <li>There is no BDFL - instead, there are many maintainers, aka miners. Anyone can be a maintainer. Each one has a copy of the whole blockchain repo and can verify the validity of every block and transaction. Each one also has a list of valid proposed transactions gathered by listening to the chatter on the P2P network.</li>
+    </ul>
+
+    <p>
+Which of the maintainers in this anarchist paradise gets to issue the next commit, and how does everyone agree? All maintainers will have perfectly valid candidate commits. This is the great distributed consensus problem. Made much worse by the fact that participants don't have an identity, join and leave when they like, there is no global time, messages can get reordered, etc. etc.
+    </p>
+    <p>
+Well, suppose God rolled dice and anoints a lucky miner as BDFL-du-jour, and the chosen one commits the next block to universal acclaim. Everyone updates their blockchain with the latest commit, and after a few minutes, God rolls again. (In the future, everyone will be dictator for 15 minutes.)
+    </p>
+
+    <p>
+But we don't like the idea of God playing dice. Instead, we run a decentralized lottery by asking each miner to flip, say, 30 coins. The one who gets all heads wins, and is anointed BDFL-du-jour. To avoid the tedium of passing around photos and allegations of cheating, we use the equivalent process of selecting the miner whose candidate block id is a "lucky number" with 30 leading zeros. Miners keep tweaking the contents of their candidate block and compute <i>hash(block contents, parent block-id)</i> to see if they got a lucky number. Whoever finds a winner promptly publishes their block. Everyone can (easily) verify the fact that this is a winning block by computing its hash, and append it to their copy of the blockchain.
+    </p>
+
+    <p>
+    What's in it for the miners? In Bitcoin, the flagship blockchain application, they're allowed to insert a special first transaction in the block which mints a fixed reward of (currently) 25 bitcoin as the lottery prize, and assign it to their own address.
+    </p>
+
+    <p>
+    Since the output of the hash algorithm is random, miners have no alternative to brute force tweaking of block contents to produce blocks whose hash happens to be a lucky number. There are no heuristics to shorten the process. If you miss by a single digit, you are no closer to the prize than if you missed by 10. In the above example of 30 leading zeros, the probability of getting a lucky block in a single attempt is one in a billion, the same as tossing 30 coins and having them all land heads. It is this asymmetry between finding a lucky number (very hard) and verifying a lucky number (very easy) which makes the distributed lottery feasible.
+    </p>
+
+    <p>
+    There is a rule that you must consider the longest valid chain as <em>the</em> blockchain, discarding all others. As long as the majority of participants follow this rule, there is no percentage in sulking and refusing to acknowledge a lottery winner. If a block named <strong>LEIA</strong> is acclaimed as heir to the latest block <strong>ANAKIN</strong>, then you're better off accepting her and trying to find a <strong>BEN</strong> child of <strong>LEIA</strong> child of <strong>ANAKIN</strong>. You could dispute <strong>LEIA</strong>'s succession to the Skywalker blockchain by putting up a <strong>LUKE</strong> child of <strong>ANAKIN</strong>, but unless you can quickly come up with an <strong>ANAKIN &#8594; LUKE &#8594; REY</strong> before an <strong>ANAKIN &#8594; LEIA &#8594; BEN</strong> chain is found, your efforts will be wasted. And remember, you alone will be trying to find <strong>LUKE</strong> and <strong>REY</strong> against the combined efforts of the rest of your peers who only need to find a <strong>BEN</strong>.
+    </p>
+    <p>
+    However, if by incredible luck, you do find <strong> ANAKIN &#8594; LUKE &#8594; REY</strong> before anyone finds <strong>ANAKIN &#8594; LEIA &#8594; BEN</strong>, everybody will acknowledge your chain as the legit heirs to the Skywalker dynasty. All transactions unfortunate enough to be only in <strong>LEIA</strong> will be undone and will need to be retried. Once six generations have gone by, however, it's kinda safe to assume that transactions will not be undone. Almost impossible for a pretender to show up suddenly with six generations of impeccable lineage because of the amount of work or luck needed.
+    </p>
+
+    <p>
+    If there are only a few participants, the lottery can take a distressingly long time to produce a winner, and transaction commit rate would be very low. Conversely, if we required a short zero prefix - relative to the combined CPU power of all participants - then we would get many winners in the same interval, and there would be a war of succession as the consensus on the longest chain flickers between different lines of descent.
+    </p>
+
+    <p>
+    So the Bitcoin blockchain requires all participants to measure the rate of lucky number generation (i.e. the rate at which blocks are added) and dynamically adjust the zero prefix length requirement, such that there is on average one win, or block added, every 10 minutes. This interval lets news of an heir propagate through the whole network before a rival is found.
+    </p>
+    <p>
+    This is what the Bitcoin blockchain looks like today:
+    </p>
+
+    <p>
+    <a href="000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f">000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f (Genesis)</a> &#8594;  <a href="00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048">00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048</a> &#8594; <br>&hellip;(~417,000 blocks later)&hellip; <a href="000000000000000000fb5c0704b121a50e67d19e4d75af0ba88aeaa34511eb6f">000000000000000000fb5c0704b121a50e67d19e4d75af0ba88aeaa34511eb6f</a> &#8594; <a href="000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398">000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398</a> &#8594; <a href="000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398">000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398</a>
+    </p>
+    <p>
+    Note that the zero prefix requirement has gone up from 32 bits in 2009 to 72, each additional bit representing a doubling of difficulty and a corresponding increase in mining power and popularity.
+    </p>
+
+    <p>
+    This is Satoshi's greatest, most hilarious trick: to achieve distributed consensus, slow down the commit rate with a self-scaling lottery, so blocks are found and appended one at a time.
+    </p>
+
+  </article>
+  <footer>
+    <p>
+      <small>
+        Uses the <a href="https://github.com/matejlatin/Gutenberg">Gutenberg</a> typography system.
+      </small>
+    </p>
+  </footer>
+  <script src="js/combined.js"></script>
+</body>
+</html>

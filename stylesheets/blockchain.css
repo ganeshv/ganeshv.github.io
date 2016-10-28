@@ -1,0 +1,26 @@
+.blockchain {
+    font-size: 16px;
+    height: 10em;
+}
+
+.gitblock {
+    display: inline-block;
+    width: 10em;
+    border: 1px solid #333;
+    border-radius: 3px;
+    background-color: #ddd;
+    padding: 0.5em;
+}
+
+.blockname, .blockparent {
+    margin: 0;
+    text-overflow: ellipsis;
+    max-width: 10em;
+}
+
+.blockarrow {
+    font-size: 24px;
+    display: inline-block;
+    width: 1em;
+    vertical-align: 80px;
+}
