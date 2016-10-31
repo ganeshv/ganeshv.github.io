@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +7,7 @@
   <link rel="stylesheet" href="stylesheets/combined.css">
   <link rel="stylesheet" href="stylesheets/blockchain.css">
   <link href='https://fonts.googleapis.com/css?family=Merriweather:400,700,400italic' rel='stylesheet' type='text/css'>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 </head>
 <body>
   <article>
@@ -33,7 +33,7 @@ Because this is git, every participant has their own copy of the repo with the e
 
     <div class="blockchain">
         <div class="gitblock">
-            <div class="blockname" title="dljnjn"><strong>ID: </strong>4893483948474743797878787879898</div>
+            <div class="blockname" title="dljnjn"><strong>ID: </strong>913132424234343487879898</div>
             <div class="blockparent" title="knskjnv"><strong>Parent: </strong>57485748</div>
             <textarea></textarea>
         </div>
@@ -56,7 +56,7 @@ Because this is git, every participant has their own copy of the repo with the e
             <textarea></textarea>
         </div>
     </div>
-    <p><em>Try changing the contents of the block above</em></p>
+    <p><em>Tamper-proof chain: try changing the contents of any block - the names of that and all subsequent blocks change.</em></p>
     <p>
 So there are limits to the BDFL's power: they cannot change history, they cannot commit spurious patches without everyone noticing. They can, however, simply ignore someone's patches out of spite.
     </p>
@@ -126,5 +126,8 @@ But we don't like the idea of God playing dice. Instead, we run a decentralized 
     </p>
   </footer>
   <script src="js/combined.js"></script>
+  <script src="js/polyfill.min.js"></script>
+  <script src="js/gentrify-browser.js"></script>
+  <script src="js/blockchain.js"></script>
 </body>
 </html>

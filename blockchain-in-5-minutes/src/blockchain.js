@@ -1,0 +1,2 @@
+function blockchain_example() {
+}
