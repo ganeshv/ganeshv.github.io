@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-latest-minimal": "^1.1.2",
+    "babelify": "^7.3.0",
+    "browserify": "^10.0.0",
+    "sha1": "^1.1.1"
+  },
+  "scripts": {
+    "clean": "rm -rf lib/blockchain.js",
+    "build": "browserify src/blockchain.js -o js/blockchain.js -t [ babelify --presets [ es2015 ] ]"
+  }
+}

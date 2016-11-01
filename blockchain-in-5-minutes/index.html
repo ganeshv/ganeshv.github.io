@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <title>Gutenberg — Meaningful Web Typography Starter Kit</title>
-  <link rel="stylesheet" href="stylesheets/combined.css">
-  <link rel="stylesheet" href="stylesheets/blockchain.css">
+  <link rel="stylesheet" href="css/combined.css">
+  <link rel="stylesheet" href="css/blockchain.css">
   <link href='https://fonts.googleapis.com/css?family=Merriweather:400,700,400italic' rel='stylesheet' type='text/css'>
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 </head>
 <body>
   <article>
@@ -31,32 +32,9 @@ Let us sidle up to blockchains by considering how a typical open-source project 
 Because this is git, every participant has their own copy of the repo with the entire commit history. Each commit is identified by <i>hash(commit contents + parent commit-id)</i>. This makes commit history immutable. The very name of the latest commit depends on its entire ancestry. Everybody knows the rules for what is considered valid code (it must pass the regression tests, etc.), so each community member can independently verify the validity of patches and the commit history.
     </p>
 
-    <div class="blockchain">
-        <div class="gitblock">
-            <div class="blockname" title="dljnjn"><strong>ID: </strong>913132424234343487879898</div>
-            <div class="blockparent" title="knskjnv"><strong>Parent: </strong>57485748</div>
-            <textarea></textarea>
-        </div>
-        <div class="blockarrow">&#8594;</div>
-        <div class="gitblock">
-            <div class="blockname" title="dljnjn">4893483948</div>
-            <div class="blockparent" title="knskjnv">57485748</div>
-            <textarea></textarea>
-        </div>
-        <div class="blockarrow">&#8594;</div>
-        <div class="gitblock">
-            <div class="blockname" title="dljnjn">4893483948</div>
-            <div class="blockparent" title="knskjnv">57485748</div>
-            <textarea></textarea>
-        </div>
-        <div class="blockarrow">&#8594;</div>
-        <div class="gitblock">
-            <div class="blockname" title="dljnjn">4893483948</div>
-            <div class="blockparent" title="knskjnv">57485748</div>
-            <textarea></textarea>
-        </div>
+    <div class="blockchain" id="blockchain">
     </div>
-    <p><em>Tamper-proof chain: try changing the contents of any block - the names of that and all subsequent blocks change.</em></p>
+    <p><em>Tamper-proof chain: change the contents of any block - names of that block and all subsequent blocks change.</em></p>
     <p>
 So there are limits to the BDFL's power: they cannot change history, they cannot commit spurious patches without everyone noticing. They can, however, simply ignore someone's patches out of spite.
     </p>
@@ -64,7 +42,7 @@ So there are limits to the BDFL's power: they cannot change history, they cannot
     Now onto the blockchain.
     </p>
     <ul>
-    <li>The blockchain is very like a git repo with a single branch. Transactions are batched into blocks, just as patches were batched into commits. Like commits, blocks are identified by block-ids derived from <i>hash(block contents + parent block-id)</i>.</li>
+    <li>The blockchain is very much like a git repo with a single branch. Transactions are batched into blocks, just as patches were batched into commits. Like commits, blocks are identified by block-ids derived from <i>hash(block contents + parent block-id)</i>.</li>
     <li>There is a P2P network ("mailing list") where participants announce new transactions for incorporation into a block.</li>
     <li>There is no BDFL - instead, there are many maintainers, aka miners. Anyone can be a maintainer. Each one has a copy of the whole blockchain repo and can verify the validity of every block and transaction. Each one also has a list of valid proposed transactions gathered by listening to the chatter on the P2P network.</li>
     </ul>
