@@ -1998,33 +1998,30 @@ var sha1 = require('sha1'),
 
 function blockchain_example() {
     var template = function template(block) {
-        return "\n        <div class=\"gitblock\" id=\"gitblock_" + block.idx + "\">\n            <div class=\"blockname\"><strong>ID </strong><span class=\"gitblock_id\"></span></div>\n            <div class=\"blockparent\"><strong>Parent </strong><span class=\"gitblock_parent\"></span></div>\n            <textarea rows=\"6\">" + block.contents + "</textarea>\n        </div>\n    ";
+        return "\n        <div class=\"gitblock\" id=\"gitblock_" + block.idx + "\">\n            <div class=\"blockname\"><strong>ID </strong><span class=\"gitblock_id\">" + block.id + "</span></div>\n            <div class=\"blockparent\"><strong>Parent </strong><span class=\"gitblock_parent\">" + block.parent_id + "</span></div>\n            <textarea rows=\"6\">" + block.contents + "</textarea>\n        </div>\n    ";
     };
-    var parent_block = void 0,
-        genesis_parent = "0000000000",
-        parent_ch = void 0,
-        genesis_in = csp.chan();
-    parent_block = genesis_parent;
-    parent_ch = genesis_in;
+    var parent_id = "0000000000",
+        parent_ch = csp.chan();
     var contents = ["Mary had a little lamb", "Its fleece was white as snow", "And everywhere that Mary went", "The lamb was sure to go"];
     for (var i = 0; i < 4; i++) {
         var block = {
             idx: i,
+            id: sha1("parent " + parent_id + "\n" + contents[i]),
+            parent_id: parent_id,
             contents: contents[i]
         };
         $("#blockchain").append(template(block));
         if (i < 3) $("#blockchain").append('<div class="blockarrow">&#8594;</div>');
         var outch = csp.chan();
         csp.spawn(run_block(parent_ch, outch, i));
-        parent_block = block.name;
+        parent_id = block.id;
         parent_ch = outch;
     }
     parent_ch.close(); // close output of last block so `put` always succeeds
-    csp.putAsync(genesis_in, genesis_parent);
 }
 
 function run_block(parentch, outch, idx) {
-    var block_el, name_div, name_span, parent_div, parent_span, txt, txtch, content, id, parent_id, r, render;
+    var block_el, name_div, name_span, parent_div, parent_span, txt, txtch, content, id, parent_id, old_id, old_parent_id, r, render;
     return regeneratorRuntime.wrap(function run_block$(_context) {
         while (1) {
             switch (_context.prev = _context.next) {
@@ -2034,16 +2031,20 @@ function run_block(parentch, outch, idx) {
                         name_div.attr('title', id);
                         parent_span.text(parent_id);
                         parent_div.attr('title', parent_id);
-                        parent_span.animate({ backgroundColor: "#f2dede" }, 100).delay(100).animate({ backgroundColor: "#fff" }, 100);
-                        name_span.animate({ backgroundColor: "#f2dede" }, 100).delay(100).animate({ backgroundColor: "#fff" }, 100);
+                        if (old_parent_id !== parent_id) {
+                            parent_span.animate({ backgroundColor: "#f2dede" }, 100).delay(100).animate({ backgroundColor: "#fff" }, 100);
+                        }
+                        if (old_id !== id) {
+                            name_span.animate({ backgroundColor: "#f2dede" }, 100).delay(100).animate({ backgroundColor: "#fff" }, 100);
+                        }
                     };
 
                     block_el = $("#gitblock_" + idx), name_div = $("#gitblock_" + idx + " .blockname"), name_span = $("#gitblock_" + idx + " .gitblock_id"), parent_div = $("#gitblock_" + idx + " .blockparent"), parent_span = $("#gitblock_" + idx + " .gitblock_parent"), txt = $("#gitblock_" + idx + " textarea"), txtch = listen(txt[0], 'change');
-                    content = txt.val(), id = void 0, parent_id = void 0;
+                    content = txt.val(), id = void 0, parent_id = void 0, old_id = void 0, old_parent_id = void 0;
 
                 case 3:
                     if (!true) {
-                        _context.next = 16;
+                        _context.next = 18;
                         break;
                     }
 
@@ -2053,6 +2054,8 @@ function run_block(parentch, outch, idx) {
                 case 6:
                     r = _context.sent;
 
+                    old_parent_id = parent_id;
+                    old_id = id;
                     if (r.channel === parentch) {
                         parent_id = r.value;
                     } else {
@@ -2060,18 +2063,18 @@ function run_block(parentch, outch, idx) {
                     }
                     id = sha1("parent " + parent_id + "\n" + content);
                     render();
-                    _context.next = 12;
+                    _context.next = 14;
                     return csp.timeout(300);
 
-                case 12:
-                    _context.next = 14;
+                case 14:
+                    _context.next = 16;
                     return csp.put(outch, id);
 
-                case 14:
+                case 16:
                     _context.next = 3;
                     break;
 
-                case 16:
+                case 18:
                 case "end":
                     return _context.stop();
             }
