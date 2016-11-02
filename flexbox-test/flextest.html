@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title>Gutenberg — Meaningful Web Typography Starter Kit</title>
+  <link rel="stylesheet" href="css/combined.css">
+  <script src="js/jquery-3.1.1.min.js"></script>
+    <style>
+pre {
+    line-height: 1.2;
+    font-size: 12px;
+    margin-bottom: 1em;
+}        
+.ccommon {
+    display: flex;
+}
+
+.container1 {
+    flex-flow: row wrap;
+    justify-content: space-between;
+    height: 6em;
+}
+
+.container2 {
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    height: 6em;
+}
+.container3 {
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 6em;
+}
+.container4 {
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: center;
+    height: 6em;
+}
+.container5 {
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: baseline;
+    height: 6em;
+}
+.container6 {
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    height: 6em;
+}
+.container7 {
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    height: 20em;
+}
+.container8 {
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    height: 6em;
+}
+.container9 {
+    flex-flow: column;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.flex-shrink0 {
+    flex-shrink: 0;
+}
+
+.flex-grow1 {
+    flex-grow: 1;
+}
+.flex-grow2 {
+    flex-grow: 2;
+}
+.fi_width100 {
+    width: 100%;
+}
+.border {
+    border: 1px solid #333;
+}
+
+.zmargin {
+    margin: 0;
+}
+
+.lmargin {
+    margin: 0.5em;
+}
+
+.amargin {
+    margin: auto;
+}
+
+.sized {
+    width: 6em;
+    height: 3em;
+}
+
+.ov {
+    overflow: scroll;
+}
+    </style>
+</head>
+<body>
+<script>
+function squirt(cls, title, n=1, item_cls1='', item_cls2='', item_cls3='', item_cls4='') {
+    const zmargin = `
+            <div class="border zmargin ${item_cls1}">zmargin</div>
+            <div class="border zmargin sized ov ${item_cls2}">sized<br>6em x 3em<br>overflowingrightanddown</div>
+            <div class="border zmargin ${item_cls3}">margin<br>0</div>
+            <div class="border zmargin sized ${item_cls4}">sized<br>6em x 3em<br>overflowingrightanddown</div>
+    `;
+    const amargin = `
+            <div class="border amargin ${item_cls1}">margin<br>auto</div>
+            <div class="border amargin sized ov ${item_cls2}">sized<br>6em x 3em<br>overflowingrightanddown</div>
+            <div class="border amargin ${item_cls3}">amargin</div>
+            <div class="border amargin sized ${item_cls4}">sized<br>6em x 3em<br>overflowingrightanddown</div>
+    `;
+    let tmpl = `
+        <p> <strong>${title}</strong> </p>
+        <div class="ccommon ${cls} border">
+    ` + zmargin.repeat(n) + `
+        </div>
+
+        <div class="ccommon ${cls} border">
+    ` + amargin.repeat(n) + `
+        </div>
+    `;
+
+    document.write(tmpl);
+}
+</script>
+  <article>
+    <h1>Flexbox layout</h1>
+    <p class="attention-grabber">A short guide to develop an intuition for what blockchains are and how they work. Basic exposure to git, hashing algorithms assumed.</p>
+    <p>
+    Dimensions:
+    <ul>
+    <li>margin: 0, auto</li>
+    <li>justify-content: center, flex-start, space-between (flex-end, space-around)</li>
+    <li>align-items: stretch, flex-start, center, baseline</li>
+    <li>wrap/nowrap</li>
+    <li>align-content: </li>
+    <li>flex-grow: </li>
+    <li>flex-shrink: </li>
+    <li>flex-basis: </li>
+    <li>align-self: </li>
+    </ul>
+    <p>
+    Unsized block elements: divs and p's don't span the width of their (flex) container. They are exactly as wide as their contents. They're spanning height in this case because <em>align-items </em> defaults to stretch.
+    </p>
+    <script>squirt("container1", "justify-content: space-between");</script>
+    <script>squirt("container2", "justify-content: flex-start");</script>
+    <script>squirt("container3", "justify-content: flex-start, align-items: flex-start");</script>
+    <script>squirt("container4", "justify-content: flex-start, align-items: center");</script>
+    <script>squirt("container5", "justify-content: flex-start, align-items: baseline");</script>
+    <script>squirt("container6", "justify-content: flex-start, align-items: stretch");</script>
+    <script>squirt("container7", "justify-content: flex-start, align-items: stretch", 3);</script>
+    <p>
+    Nowrap cases here. Note that the scrollable sized div gets squeezed, though it's the same size as the non-scrollable sized div
+    </p>
+    <script>squirt("container8", "flex: row nowrap", 3);</script>
+
+    <p>
+    Our poor scrollable div is squeezed flat, while the rest of the crowd spills out rather than wrap
+    </p>
+    <script>squirt("container8", "flex: row nowrap", 4);</script>
+
+    <p>
+    Let's see what happens if we set all to flex-shrink: 0.
+    As expected, our poor scrollable div retains its original dimensions
+    </p>
+    <script>squirt("container8", "flex: row nowrap, (flex-shrink: 0)", 4, "flex-shrink0");</script>
+
+    <script>squirt("container1", "(all items flex-grow: 1)", 1, "flex-grow1", "flex-grow1", "flex-grow1", "flex-grow1" );</script>
+    <script>squirt("container1", "([flex-grow: 1])", 1, "flex-grow1");</script>
+    <script>squirt("container1", "([flex-grow: 1, flex-grow: 1])", 1, "flex-grow1", "flex-grow1");</script>
+    <script>squirt("container1", "([flex-grow: 1, flex-grow: 2])", 1, "flex-grow1", "flex-grow2");</script>
+    <script>squirt("container1", "([flex-grow: 2, flex-grow: 1, flex-grow: 1, flex-grow: 1])", 1, "flex-grow2", "flex-grow1", "flex-grow1", "flex-grow1");</script>
+    <script>squirt("container9", "vertical layout", 6);</script>
+    </article>
+</body>
+</html>
