@@ -2091,13 +2091,13 @@ function listen(el, type, ch) {
 }
 
 function tosser(outch) {
-    var toss1, toss100, reset, tosses, chans, r;
+    var toss1, toss100, reset, messages, chans, r;
     return regeneratorRuntime.wrap(function tosser$(_context2) {
         while (1) {
             switch (_context2.prev = _context2.next) {
                 case 0:
                     toss1 = listen($("#toss1")[0], 'click'), toss100 = listen($("#toss100")[0], 'click'), reset = listen($("#resetbutton")[0], 'click');
-                    tosses = 0;
+                    messages = [];
 
                 case 2:
                     if (!true) {
@@ -2107,8 +2107,8 @@ function tosser(outch) {
 
                     chans = [toss1, toss100, reset];
 
-                    if (tosses) {
-                        chans.push([outch, 'toss']);
+                    if (messages.length) {
+                        chans.push([outch, messages[0]]);
                     }
                     _context2.next = 7;
                     return csp.alts(chans);
@@ -2121,7 +2121,7 @@ function tosser(outch) {
                         break;
                     }
 
-                    tosses++;
+                    messages.push('toss');
                     _context2.next = 23;
                     break;
 
@@ -2131,7 +2131,7 @@ function tosser(outch) {
                         break;
                     }
 
-                    tosses += 100;
+                    messages = messages.concat(new Array(100).fill('atoss'));
                     _context2.next = 23;
                     break;
 
@@ -2141,7 +2141,7 @@ function tosser(outch) {
                         break;
                     }
 
-                    tosses = 0;
+                    messages = [];
                     _context2.next = 20;
                     return csp.put(outch, 'reset');
 
@@ -2151,7 +2151,7 @@ function tosser(outch) {
 
                 case 22:
                     if (r.channel === outch) {
-                        tosses--;
+                        messages.shift();
                     }
 
                 case 23:
@@ -2183,20 +2183,25 @@ function casino(tossch) {
                             while (1) {
                                 switch (_context3.prev = _context3.next) {
                                     case 0:
+
                                         coins.html(blur);
-                                        _context3.next = 3;
+
+                                        if (!(msg === 'toss')) {
+                                            _context3.next = 4;
+                                            break;
+                                        }
+
+                                        _context3.next = 4;
                                         return csp.timeout(150);
 
-                                    case 3:
+                                    case 4:
                                         coins.html(function (x) {
                                             return current[x] ? tails : heads;
                                         });
                                         $("#coins").clone().removeAttr('id').css('background-color', sum ? '#fff' : '#ddd').css('opacity', sum ? '0.5' : '1.0').prependTo($("#coinlog"));
-                                        $("#coinresult").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / 32 * trials) + ")</i></p>");
-                                        _context3.next = 8;
-                                        return csp.timeout(100);
+                                        $("#coinresult").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / (1 << ncoins) * trials) + ")</i></p>");
 
-                                    case 8:
+                                    case 7:
                                     case "end":
                                         return _context3.stop();
                                 }
@@ -2206,7 +2211,7 @@ function casino(tossch) {
 
                     _marked2 = [render_toss].map(regeneratorRuntime.mark);
                     coinblock = $("#coinblock"), coins = $("#coins .coin"), ncoins = coins.length, coinlog = $("#coinlog"), heads = '<img src="img/heads.png">', tails = '<img src="img/tails.png">', blur = '<img src="img/heads-blur.png">';
-                    wins = 0, trials = 0, hist = [], current = [], sum = 0;
+                    wins = 0, trials = 0, hist = [], current = [], sum = 0, msg = void 0;
 
 
                     render_reset();
@@ -2223,7 +2228,7 @@ function casino(tossch) {
                 case 9:
                     msg = _context4.sent;
 
-                    if (!(msg === 'toss')) {
+                    if (!(msg === 'toss' || msg === 'atoss')) {
                         _context4.next = 20;
                         break;
                     }

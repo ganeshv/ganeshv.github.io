@@ -93,23 +93,23 @@ function* tosser(outch) {
         toss100 = listen($("#toss100")[0], 'click'),
         reset = listen($("#resetbutton")[0], 'click');
 
-    let tosses = 0;
+    let messages = [];
 
     while (true) {
         let chans = [toss1, toss100, reset];
-        if (tosses) {
-            chans.push([outch, 'toss'])
+        if (messages.length) {
+            chans.push([outch, messages[0]])
         }
         let r = yield csp.alts(chans);
         if (r.channel === toss1) {
-            tosses++;
+            messages.push('toss');
         } else if (r.channel === toss100) {
-            tosses += 100;
+            messages = messages.concat(new Array(100).fill('atoss'));
         } else if (r.channel === reset) {
-            tosses = 0;
+            messages = [];
             yield csp.put(outch, 'reset');
         } else if (r.channel === outch) {
-            tosses--;
+            messages.shift();
         }
     }
 }
@@ -127,12 +127,13 @@ function* casino(tossch) {
         trials = 0,
         hist = [],
         current = [],
-        sum = 0;
+        sum = 0,
+        msg;
 
     render_reset();
     while (true) {
-        const msg = yield tossch;
-        if (msg === 'toss') {
+        msg = yield tossch;
+        if (msg === 'toss'|| msg === 'atoss') {
             current = coins.map(get_random);
             sum = Array.from(current).reduce((x, y) => x + y, 0);
             hist[sum] = hist[sum] ? hist[sum] + 1 : 1;
@@ -148,15 +149,15 @@ function* casino(tossch) {
     }
 
     function* render_toss() {
+
         coins.html(blur);
-        yield csp.timeout(150);
+        if (msg === 'toss') yield csp.timeout(150);
         coins.html(x => current[x] ? tails : heads);
         $("#coins").clone().removeAttr('id')
             .css('background-color', sum ? '#fff' : '#ddd')
             .css('opacity', sum ? '0.5' : '1.0')
             .prependTo($("#coinlog"));
-        $("#coinresult").html(`<h2>Wins: ${wins} / ${trials}</h2><p><i>(expected ${Math.round(1/32*trials)})</i></p>`);
-        yield csp.timeout(100);
+        $("#coinresult").html(`<h2>Wins: ${wins} / ${trials}</h2><p><i>(expected ${Math.round(1 / (1 << ncoins) * trials)})</i></p>`);
     }
 
     function render_reset() {
