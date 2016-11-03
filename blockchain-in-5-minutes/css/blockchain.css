@@ -1,4 +1,4 @@
-.blockchain {
+.container {
     font-size: 16px;
     height: 10em;
 }
@@ -35,4 +35,87 @@
 .gitblock_id, .gitblock_parent {
     background-color: #fff;
     padding: 2px;
+}
+
+.ccontainer {
+    display: flex;
+    flex-flow: row wrap;
+    border: 1px solid #333;
+    height: 16em;
+    overflow: scroll;
+}
+
+.coinbuttons {
+    padding: 0.5em;
+    border-right: 1px solid #333;
+    background-color: #ddd;
+    display: flex;
+    flex-flow: column;
+    margin: 0;
+    align-items: stretch;
+}
+
+.coinbuttons button {
+    margin: 0.5em 0;
+}
+
+.coinbuttons button.resetbutton {
+    margin-top: auto;
+}
+
+.coinblock {
+    display: flex;
+    flex: 1;
+    flex-flow: column;
+    align-items: stretch;
+    border-right: 1px solid #333;
+    margin: 0;
+}
+
+.resultblock {
+    flex: 1;
+    display: flex;
+    flex-flow: column;
+    align-items: stretch;
+    margin: 0;
+}
+
+.coins {
+    flex: 1;
+    display: flex;
+    flex-flow: row wrap;
+    margin: 0;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.coin {
+    margin: 0;
+    width: 4em;
+    height: 4em;
+}
+
+.coinlog {
+    flex: 2;
+    border-top: 1px solid #333;
+    margin: 0;
+    overflow: scroll;
+}
+
+.coinresult {
+    flex: 1;
+    flex-flow: column;
+    display: flex;
+    margin: 0;
+}
+
+.coinresult h2 {
+    margin: auto;
+}
+.coinresult p {
+}
+.coingraph {
+    flex: 2;
+    margin: 0;
+    border: 1px solid #333;
 }

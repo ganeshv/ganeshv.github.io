@@ -88,4 +88,96 @@ function listen(el, type, ch) {
     return ch;
 }
 
-$(document).ready(blockchain_example);
+function* tosser(outch) {
+    const toss1 = listen($("#toss1")[0], 'click'),
+        toss100 = listen($("#toss100")[0], 'click'),
+        reset = listen($("#resetbutton")[0], 'click');
+
+    let tosses = 0;
+
+    while (true) {
+        let chans = [toss1, toss100, reset];
+        if (tosses) {
+            chans.push([outch, 'toss'])
+        }
+        let r = yield csp.alts(chans);
+        if (r.channel === toss1) {
+            tosses++;
+        } else if (r.channel === toss100) {
+            tosses += 100;
+        } else if (r.channel === reset) {
+            tosses = 0;
+            yield csp.put(outch, 'reset');
+        } else if (r.channel === outch) {
+            tosses--;
+        }
+    }
+}
+
+function* casino(tossch) {
+    const coinblock = $("#coinblock"),
+        coins = $("#coins .coin"),
+        ncoins = coins.length,
+        coinlog = $("#coinlog"),
+        heads = '<img src="img/heads.png">',
+        tails = '<img src="img/tails.png">',
+        blur = '<img src="img/heads-blur.png">';
+    
+    let wins = 0,
+        trials = 0,
+        hist = [],
+        current = [],
+        sum = 0;
+
+    render_reset();
+    while (true) {
+        const msg = yield tossch;
+        if (msg === 'toss') {
+            current = coins.map(get_random);
+            sum = Array.from(current).reduce((x, y) => x + y, 0);
+            hist[sum] = hist[sum] ? hist[sum] + 1 : 1;
+            trials++;
+            if (sum === 0) wins++;
+            yield render_toss();
+        } else if (msg === 'reset') {
+            wins = trials = sum = 0;
+            hist = [];
+            current = [];
+            render_reset();
+        }
+    }
+
+    function* render_toss() {
+        coins.html(blur);
+        yield csp.timeout(150);
+        coins.html(x => current[x] ? tails : heads);
+        $("#coins").clone().removeAttr('id')
+            .css('background-color', sum ? '#fff' : '#ddd')
+            .css('opacity', sum ? '0.5' : '1.0')
+            .prependTo($("#coinlog"));
+        $("#coinresult").html(`<h2>Wins: ${wins} / ${trials}</h2><p><i>(expected ${Math.round(1/32*trials)})</i></p>`);
+        yield csp.timeout(100);
+    }
+
+    function render_reset() {
+        $("#coinlog").empty();
+        $("#coinresult").html(`<h2>Wins: ${wins} / ${trials}</h2><p><i>(expected ${Math.round(1/32*trials)})</i></p>`);
+    }
+}
+
+function coin_example() {
+    const ch = csp.chan();
+    csp.takeAsync(csp.spawn(casino(ch)), x => console.log(x));
+    csp.takeAsync(csp.spawn(tosser(ch)), x => console.log(x));
+}
+
+function get_random() {
+    const arr = new Uint8Array(1);
+    crypto.getRandomValues(arr);
+    return arr[0] > 127 ? 1 : 0;
+}
+
+$(document).ready(function() {
+    blockchain_example();
+    coin_example();
+});

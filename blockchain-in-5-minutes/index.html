@@ -6,9 +6,13 @@
   <title>Gutenberg — Meaningful Web Typography Starter Kit</title>
   <link rel="stylesheet" href="css/combined.css">
   <link rel="stylesheet" href="css/blockchain.css">
+  <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src="js/jquery-ui-1.12.1.min.js"></script>
+<!--
   <link href='https://fonts.googleapis.com/css?family=Merriweather:400,700,400italic' rel='stylesheet' type='text/css'>
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
   <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+-->
 </head>
 <body>
   <article>
@@ -32,7 +36,7 @@ Let us sidle up to blockchains by considering how a typical open-source project 
 Because this is git, every participant has their own copy of the repo with the entire commit history. Each commit is identified by <i>hash(commit contents + parent commit-id)</i>. This makes commit history immutable. The very name of the latest commit depends on its entire ancestry. Everybody knows the rules for what is considered valid code (it must pass the regression tests, etc.), so each community member can independently verify the validity of patches and the commit history.
     </p>
 
-    <div class="blockchain" id="blockchain">
+    <div class="container" id="blockchain">
     </div>
     <p><em>Tamper-proof chain: change the contents of any block - names of that block and all subsequent blocks change.</em></p>
     <p>
@@ -66,6 +70,37 @@ But we don't like the idea of God playing dice. Instead, we run a decentralized 
     Since the output of the hash algorithm is random, miners have no alternative to brute force tweaking of block contents to produce blocks whose hash happens to be a lucky number. There are no heuristics to shorten the process. If you miss by a single digit, you are no closer to the prize than if you missed by 10. In the above example of 30 leading zeros, the probability of getting a lucky block in a single attempt is one in a billion, the same as tossing 30 coins and having them all land heads. It is this asymmetry between finding a lucky number (very hard) and verifying a lucky number (very easy), and the ability of each participant to do both activities by themselves, without external co-ordination, which makes the distributed lottery feasible.
     </p>
 
+    <div class="ccontainer">
+        <div class="coinbuttons">
+            <button id="toss1">Toss 1</button>
+            <button id="toss100">Toss 100</button>
+            <button id="resetbutton">Reset</button>
+        </div>
+        <div class="coinblock" id="coinblock">
+            <div class="coins" id="coins">
+                <div class="coin">
+                <img src="img/heads.png">
+                </div>
+                <div class="coin">
+                <img src="img/heads.png">
+                </div>
+                <div class="coin">
+                <img src="img/tails.png">
+                </div>
+                <div class="coin">
+                <img src="img/tails.png">
+                </div>
+            </div>
+            <div class="coinlog" id="coinlog">
+            </div>
+        </div>
+        <div class="resultblock">
+            <div class="coinresult" id="coinresult">
+            </div>
+            <div class="coingraph">
+            </div>
+        </div>
+    </div>
     <p>
     There is a rule that you must consider the longest valid chain as <em>the</em> blockchain, discarding all others. As long as the majority of participants follow this rule, there is no percentage in sulking and refusing to acknowledge a lottery winner. If a block named <strong>LEIA</strong> is acclaimed as heir to the latest block <strong>ANAKIN</strong>, then you're better off accepting her and trying to find a <strong>BEN</strong> child of <strong>LEIA</strong> child of <strong>ANAKIN</strong>. You could dispute <strong>LEIA</strong>'s succession to the Skywalker blockchain by putting up a <strong>LUKE</strong> child of <strong>ANAKIN</strong>, but unless you can quickly come up with an <strong>ANAKIN &#8594; LUKE &#8594; REY</strong> before an <strong>ANAKIN &#8594; LEIA &#8594; BEN</strong> chain is found, your efforts will be wasted. And remember, you alone will be trying to find <strong>LUKE</strong> and <strong>REY</strong> against the combined efforts of the rest of your peers who only need to find a <strong>BEN</strong>.
     </p>

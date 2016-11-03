@@ -1991,7 +1991,7 @@ module.exports = Array.isArray || function (arr) {
 },{"buffer":2,"charenc":3,"crypt":4}],8:[function(require,module,exports){
 "use strict";
 
-var _marked = [run_block].map(regeneratorRuntime.mark);
+var _marked = [run_block, tosser, casino].map(regeneratorRuntime.mark);
 
 var sha1 = require('sha1'),
     csp = gentrify.csp;
@@ -2090,6 +2090,197 @@ function listen(el, type, ch) {
     return ch;
 }
 
-$(document).ready(blockchain_example);
+function tosser(outch) {
+    var toss1, toss100, reset, tosses, chans, r;
+    return regeneratorRuntime.wrap(function tosser$(_context2) {
+        while (1) {
+            switch (_context2.prev = _context2.next) {
+                case 0:
+                    toss1 = listen($("#toss1")[0], 'click'), toss100 = listen($("#toss100")[0], 'click'), reset = listen($("#resetbutton")[0], 'click');
+                    tosses = 0;
+
+                case 2:
+                    if (!true) {
+                        _context2.next = 25;
+                        break;
+                    }
+
+                    chans = [toss1, toss100, reset];
+
+                    if (tosses) {
+                        chans.push([outch, 'toss']);
+                    }
+                    _context2.next = 7;
+                    return csp.alts(chans);
+
+                case 7:
+                    r = _context2.sent;
+
+                    if (!(r.channel === toss1)) {
+                        _context2.next = 12;
+                        break;
+                    }
+
+                    tosses++;
+                    _context2.next = 23;
+                    break;
+
+                case 12:
+                    if (!(r.channel === toss100)) {
+                        _context2.next = 16;
+                        break;
+                    }
+
+                    tosses += 100;
+                    _context2.next = 23;
+                    break;
+
+                case 16:
+                    if (!(r.channel === reset)) {
+                        _context2.next = 22;
+                        break;
+                    }
+
+                    tosses = 0;
+                    _context2.next = 20;
+                    return csp.put(outch, 'reset');
+
+                case 20:
+                    _context2.next = 23;
+                    break;
+
+                case 22:
+                    if (r.channel === outch) {
+                        tosses--;
+                    }
+
+                case 23:
+                    _context2.next = 2;
+                    break;
+
+                case 25:
+                case "end":
+                    return _context2.stop();
+            }
+        }
+    }, _marked[1], this);
+}
+
+function casino(tossch) {
+    var _marked2, coinblock, coins, ncoins, coinlog, heads, tails, blur, wins, trials, hist, current, sum, msg, render_toss, render_reset;
+
+    return regeneratorRuntime.wrap(function casino$(_context4) {
+        while (1) {
+            switch (_context4.prev = _context4.next) {
+                case 0:
+                    render_reset = function render_reset() {
+                        $("#coinlog").empty();
+                        $("#coinresult").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / 32 * trials) + ")</i></p>");
+                    };
+
+                    render_toss = function render_toss() {
+                        return regeneratorRuntime.wrap(function render_toss$(_context3) {
+                            while (1) {
+                                switch (_context3.prev = _context3.next) {
+                                    case 0:
+                                        coins.html(blur);
+                                        _context3.next = 3;
+                                        return csp.timeout(150);
+
+                                    case 3:
+                                        coins.html(function (x) {
+                                            return current[x] ? tails : heads;
+                                        });
+                                        $("#coins").clone().removeAttr('id').css('background-color', sum ? '#fff' : '#ddd').css('opacity', sum ? '0.5' : '1.0').prependTo($("#coinlog"));
+                                        $("#coinresult").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / 32 * trials) + ")</i></p>");
+                                        _context3.next = 8;
+                                        return csp.timeout(100);
+
+                                    case 8:
+                                    case "end":
+                                        return _context3.stop();
+                                }
+                            }
+                        }, _marked2[0], this);
+                    };
+
+                    _marked2 = [render_toss].map(regeneratorRuntime.mark);
+                    coinblock = $("#coinblock"), coins = $("#coins .coin"), ncoins = coins.length, coinlog = $("#coinlog"), heads = '<img src="img/heads.png">', tails = '<img src="img/tails.png">', blur = '<img src="img/heads-blur.png">';
+                    wins = 0, trials = 0, hist = [], current = [], sum = 0;
+
+
+                    render_reset();
+
+                case 6:
+                    if (!true) {
+                        _context4.next = 23;
+                        break;
+                    }
+
+                    _context4.next = 9;
+                    return tossch;
+
+                case 9:
+                    msg = _context4.sent;
+
+                    if (!(msg === 'toss')) {
+                        _context4.next = 20;
+                        break;
+                    }
+
+                    current = coins.map(get_random);
+                    sum = Array.from(current).reduce(function (x, y) {
+                        return x + y;
+                    }, 0);
+                    hist[sum] = hist[sum] ? hist[sum] + 1 : 1;
+                    trials++;
+                    if (sum === 0) wins++;
+                    _context4.next = 18;
+                    return render_toss();
+
+                case 18:
+                    _context4.next = 21;
+                    break;
+
+                case 20:
+                    if (msg === 'reset') {
+                        wins = trials = sum = 0;
+                        hist = [];
+                        current = [];
+                        render_reset();
+                    }
+
+                case 21:
+                    _context4.next = 6;
+                    break;
+
+                case 23:
+                case "end":
+                    return _context4.stop();
+            }
+        }
+    }, _marked[2], this);
+}
+
+function coin_example() {
+    var ch = csp.chan();
+    csp.takeAsync(csp.spawn(casino(ch)), function (x) {
+        return console.log(x);
+    });
+    csp.takeAsync(csp.spawn(tosser(ch)), function (x) {
+        return console.log(x);
+    });
+}
+
+function get_random() {
+    var arr = new Uint8Array(1);
+    crypto.getRandomValues(arr);
+    return arr[0] > 127 ? 1 : 0;
+}
+
+$(document).ready(function () {
+    blockchain_example();
+    coin_example();
+});
 
 },{"sha1":7}]},{},[8]);
