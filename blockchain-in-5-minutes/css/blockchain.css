@@ -115,7 +115,28 @@
 .coinresult p {
 }
 .coingraph {
+    display: flex;
     flex: 2;
     margin: 0;
-    border: 1px solid #333;
+    font-family: sans-serif;
+    font-size: 10px;
+    border-top: 1px solid #333;
+}
+
+.coingraph svg {
+    margin: auto;
+
+    font-family: sans-serif;
+    font-size: 10px;
+}
+
+rect {
+/*   stroke: #fff;*/
+    shape-rendering: crispEdges;
+}
+
+.axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
 }
