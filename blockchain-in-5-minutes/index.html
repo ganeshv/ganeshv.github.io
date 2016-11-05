@@ -72,12 +72,12 @@ But we don't like the idea of God playing dice. Instead, we run a decentralized 
     </p>
 
     <div class="ccontainer">
-        <div class="coinbuttons">
-            <button id="toss1">Toss 1</button>
-            <button id="toss100">Toss 100</button>
-            <button id="resetbutton">Reset</button>
+        <div class="cbuttons" id="coinbuttons">
+            <button class="toss1">Toss 1</button>
+            <button class="toss100">Toss 100</button>
+            <button class="resetbutton">Reset</button>
         </div>
-        <div class="coinblock" id="coinblock">
+        <div class="cblock" id="coinblock">
             <div class="coins" id="coins">
                 <div class="coin">
                 <img src="img/heads.png">
@@ -92,14 +92,39 @@ But we don't like the idea of God playing dice. Instead, we run a decentralized 
                 <img src="img/tails.png">
                 </div>
             </div>
-            <div class="coinlog" id="coinlog">
+            <div class="clog" id="coinlog">
             </div>
         </div>
         <div class="resultblock">
-            <div class="coinresult" id="coinresult">
+            <div class="cresult" id="coinresult">
             </div>
-            <div class="coingraph" id="coingraph">
-                <svg id="foo"></svg>
+            <div class="cgraph" id="coingraph">
+                <svg></svg>
+            </div>
+        </div>
+    </div>
+    <div class="ccontainer">
+        <div class="cbuttons" id="sha1buttons">
+            <button id="tweak1">Tweak 1</button>
+            <button id="tweak100">Tweak 100</button>
+            <button id="wresetbutton">Reset</button>
+        </div>
+        <div class="cblock">
+            <div class="sha1">
+            <p><strong>sha1(</strong>Mary had a little lamb <input name="tweak" type="text" size="4"><strong>)</strong></p>
+            <p id="shasum"><strong><i>= 498r92420u402u40</i></strong></p>
+            </div>
+            <div class="clog slog">
+                <p><strong>&#x25CF;&#x25CF;&#x25CB;&#x25CB; 498r92420u402u40</strong></p>
+                <p><strong>&#x25CF;&#x25CF;&#x25CB;&#x25CB; 498r92420u402u40</strong></p>
+                <p><strong>&#x25CF;&#x25CF;&#x25CB;&#x25CB; 498r92420u402u40</strong></p>
+            </div>
+        </div>
+        <div class="resultblock">
+            <div class="cresult">
+            </div>
+            <div class="cgraph" id="sha1graph">
+                <svg></svg>
             </div>
         </div>
     </div>

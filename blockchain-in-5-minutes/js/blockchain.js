@@ -1991,7 +1991,7 @@ module.exports = Array.isArray || function (arr) {
 },{"buffer":2,"charenc":3,"crypt":4}],8:[function(require,module,exports){
 "use strict";
 
-var _marked = [run_block, tosser, casino].map(regeneratorRuntime.mark);
+var _marked = [run_block, tosser, coin_casino, sha1_casino].map(regeneratorRuntime.mark);
 
 var sha1 = require('sha1'),
     csp = gentrify.csp;
@@ -2090,13 +2090,13 @@ function listen(el, type, ch) {
     return ch;
 }
 
-function tosser(outch) {
+function tosser(container, outch) {
     var toss1, toss100, reset, messages, chans, r;
     return regeneratorRuntime.wrap(function tosser$(_context2) {
         while (1) {
             switch (_context2.prev = _context2.next) {
                 case 0:
-                    toss1 = listen($("#toss1")[0], 'click'), toss100 = listen($("#toss100")[0], 'click'), reset = listen($("#resetbutton")[0], 'click');
+                    toss1 = listen($(container + " .toss1")[0], 'click'), toss100 = listen($(container + " .toss100")[0], 'click'), reset = listen($(container + " .resetbutton")[0], 'click');
                     messages = [];
 
                 case 2:
@@ -2166,17 +2166,17 @@ function tosser(outch) {
     }, _marked[1], this);
 }
 
-function casino(tossch) {
-    var _marked2, coinblock, coins, ncoins, coinlog, heads, tails, blur, wins, trials, hist, current, sum, msg, render_toss, render_reset;
+function coin_casino(tossch) {
+    var _marked2, coins, ncoins, heads, tails, blur, wins, trials, hist, current, sum, msg, render_toss, render_reset;
 
-    return regeneratorRuntime.wrap(function casino$(_context4) {
+    return regeneratorRuntime.wrap(function coin_casino$(_context4) {
         while (1) {
             switch (_context4.prev = _context4.next) {
                 case 0:
                     render_reset = function render_reset() {
                         $("#coinlog").empty();
                         $("#coinresult").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / 32 * trials) + ")</i></p>");
-                        coin_graph_update(hist);
+                        graph_update(hist);
                     };
 
                     render_toss = function render_toss() {
@@ -2202,7 +2202,7 @@ function casino(tossch) {
                                         $("#coins").clone().removeAttr('id').css('background-color', sum === ncoins ? '#fff' : '#ddd').css('opacity', sum === ncoins ? '1.0' : '0.5').prependTo($("#coinlog"));
                                         $("#coinresult").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / (1 << ncoins) * trials) + ")</i></p>");
 
-                                        coin_graph_update(hist.map(function (x) {
+                                        graph_update(hist.map(function (x) {
                                             return x / trials;
                                         }));
 
@@ -2215,7 +2215,7 @@ function casino(tossch) {
                     };
 
                     _marked2 = [render_toss].map(regeneratorRuntime.mark);
-                    coinblock = $("#coinblock"), coins = $("#coins .coin"), ncoins = coins.length, coinlog = $("#coinlog"), heads = '<img src="img/heads.png">', tails = '<img src="img/tails.png">', blur = '<img src="img/heads-blur.png">';
+                    coins = $("#coins .coin"), ncoins = coins.length, heads = '<img src="img/heads.png">', tails = '<img src="img/tails.png">', blur = '<img src="img/heads-blur.png">';
                     wins = 0, trials = 0, hist = new Array(ncoins + 1).fill(0), current = [], sum = 0, msg = void 0;
 
 
@@ -2276,7 +2276,7 @@ var x = void 0,
     y = void 0,
     chart = void 0;
 
-function coin_graph_init(values, divspec) {
+function graph_init(values, divspec) {
     var outer_width = $(divspec).width(),
         outer_height = $(divspec).height(),
         margin = { top: 40, left: 40 },
@@ -2291,7 +2291,7 @@ function coin_graph_init(values, divspec) {
 
     var yAxis = d3.svg.axis().scale(y).orient('left');
 
-    chart = d3.select("#foo").attr("width", outer_width).attr("height", outer_height).append("g").attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
+    chart = d3.select(divspec + " svg").attr("width", outer_width).attr("height", outer_height).append("g").attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 
     chart.append('g').attr('class', 'x axis').attr("transform", "translate(0, " + height + ")").call(xAxis);
 
@@ -2301,12 +2301,12 @@ function coin_graph_init(values, divspec) {
 
     chart.append("text").attr("transform", "translate(-" + margin.left / 2 + ", " + height / 2 + ")rotate(-90)").style("text-anchor", "middle").text("Number of heads");
 
-    coin_graph_update(values);
+    graph_update(values);
     var pct = 1 / (1 << values.length - 1);
     chart.append("line").attr("stroke", "#000").attr("stroke-dasharray", "3").attr("x1", x(pct)).attr("y1", 0).attr("x2", x(pct)).attr("y2", height);
 }
 
-function coin_graph_update(data) {
+function graph_update(data) {
     var bar = chart.selectAll(".bar").data(data);
 
     bar.enter().append("rect").attr("class", "bar").attr("height", y.rangeBand() - 1).attr("x", 1).attr("y", function (d, i) {
@@ -2326,12 +2326,36 @@ function coin_graph_update(data) {
 
 function coin_example() {
     var ncoins = $("#coins .coin").length;
-    coin_graph_init(new Array(ncoins + 1).fill(0), "#coingraph");
+    graph_init(new Array(ncoins + 1).fill(0), "#coingraph");
     var ch = csp.chan();
-    csp.takeAsync(csp.spawn(casino(ch)), function (x) {
+    csp.takeAsync(csp.spawn(coin_casino(ch)), function (x) {
         return console.log(x);
     });
-    csp.takeAsync(csp.spawn(tosser(ch)), function (x) {
+    csp.takeAsync(csp.spawn(tosser("#coinbuttons", ch)), function (x) {
+        return console.log(x);
+    });
+}
+
+function sha1_casino(tossch) {
+    return regeneratorRuntime.wrap(function sha1_casino$(_context5) {
+        while (1) {
+            switch (_context5.prev = _context5.next) {
+                case 0:
+                case "end":
+                    return _context5.stop();
+            }
+        }
+    }, _marked[3], this);
+}
+
+function sha1_example() {
+    var ncoins = $("#coins .coin").length;
+    graph_init(new Array(ncoins + 1).fill(0), "#sha1graph");
+    var ch = csp.chan();
+    csp.takeAsync(csp.spawn(sha1_casino(ch)), function (x) {
+        return console.log(x);
+    });
+    csp.takeAsync(csp.spawn(tosser("#sha1buttons", ch)), function (x) {
         return console.log(x);
     });
 }
@@ -2345,6 +2369,7 @@ function get_random() {
 $(document).ready(function () {
     blockchain_example();
     coin_example();
+    //    sha1_example();
 });
 
 },{"sha1":7}]},{},[8]);
