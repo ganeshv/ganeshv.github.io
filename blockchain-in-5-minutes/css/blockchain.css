@@ -164,6 +164,7 @@
     margin: 0;
     min-height: 2em;
     border-bottom: 1px solid #ccc;
+    overflow: hidden;
 }
 
 #sha1-in p, #sha1-in input {
@@ -178,6 +179,7 @@
     background-color: #eee;
     border: 1px solid #333;
     border-radius: 2px;
+    overflow: hidden;
 }
 
 
@@ -191,7 +193,7 @@ rect {
     shape-rendering: crispEdges;
 }
 
-@media (max-width: 49.9em) {
+@media (max-width: 60em) {
     .ccontainer {
         flex-flow: column;
         height: auto;
