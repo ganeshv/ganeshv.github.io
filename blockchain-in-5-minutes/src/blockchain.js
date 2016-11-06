@@ -114,7 +114,7 @@ function* tosser(container, outch) {
     }
 }
 
-function* coin_casino(tossch) {
+function* coin_casino(graph, tossch) {
     const coins = $("#coins .coin"),
         ncoins = coins.length,
         heads = '<img src="img/heads.png">',
@@ -157,113 +157,188 @@ function* coin_casino(tossch) {
             .prependTo($("#coinlog"));
         $("#coinresult").html(`<h2>Wins: ${wins} / ${trials}</h2><p><i>(expected ${Math.round(1 / (1 << ncoins) * trials)})</i></p>`);
 
-        graph_update(hist.map(x => x / trials));
+        graph.update(hist.map(x => x / trials));
     }
 
     function render_reset() {
         $("#coinlog").empty();
-        $("#coinresult").html(`<h2>Wins: ${wins} / ${trials}</h2><p><i>(expected ${Math.round(1/32*trials)})</i></p>`);
-        graph_update(hist);
+        $("#coinresult").html(`<h2>Wins: ${wins} / ${trials}</h2><p><i>(expected ${Math.round(1 / (1 << ncoins) * trials)})</i></p>`);
+        graph.update(hist);
     }
 }
 
-let x, y, chart;
+class Graph {
+    constructor(ncoins, divspec, title) {
+        let outer_width = $(divspec).width(),
+            outer_height = $(divspec).height(),
+            margin = {top: 40, left: 40},
+            values = new Array(ncoins + 1).fill(0),
+            width = outer_width - margin.left * 2,
+            height = outer_height - margin.top * 2;
+     
+        let x = this.x = d3.scale.linear()
+            .domain([0, 1])
+            .range([0, width]);
 
-function graph_init(values, divspec) {
-    let outer_width = $(divspec).width(),
-        outer_height = $(divspec).height(),
-        margin = {top: 40, left: 40},
-        width = outer_width - margin.left * 2,
-        height = outer_height - margin.top * 2;
- 
-    x = d3.scale.linear()
-        .domain([0, 1])
-        .range([0, width]);
+        let y = this.y = d3.scale.ordinal()
+            .domain(d3.range(values.length))
+            .rangeRoundBands([0, height]);
 
-    y = d3.scale.ordinal()
-        .domain(d3.range(values.length))
-        .rangeRoundBands([0, height]);
-
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient('bottom')
-        .ticks(10, "%");
-
-
-    var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient('left');
-
-    chart = d3.select(`${divspec} svg`)
-        .attr("width", outer_width)
-        .attr("height", outer_height)
-        .append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
-
-    chart.append('g')
-        .attr('class', 'x axis')
-        .attr("transform", `translate(0, ${height})`)
-        .call(xAxis);
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient('bottom')
+            .ticks(10, "%");
 
 
-    chart.append("text")
-        .attr("transform", `translate(${width / 2}, ${height + margin.top * 0.7})`)
-        .style("text-anchor", "middle")
-        .text("Frequency");
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient('left');
 
-    chart.append('g')
-        .attr('class', 'y axis')
-        .call(yAxis)
+        let chart = this.chart = d3.select(`${divspec} svg`)
+            .attr("width", outer_width)
+            .attr("height", outer_height)
+            .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    chart.append("text")
-        .attr("transform", `translate(-${margin.left / 2}, ${height / 2})rotate(-90)`)
-        .style("text-anchor", "middle")
-        .text("Number of heads");
+        chart.append('g')
+            .attr('class', 'x axis')
+            .attr("transform", `translate(0, ${height})`)
+            .call(xAxis);
 
-    graph_update(values);
-    let pct = 1 / (1 << (values.length - 1));
-    chart.append("line")
-        .attr("stroke", "#000")
-        .attr("stroke-dasharray", "3")
-        .attr("x1", x(pct))
-        .attr("y1", 0)
-        .attr("x2", x(pct))
-        .attr("y2", height);
-}
 
-function graph_update(data) {
-    var bar = chart.selectAll(".bar")
-        .data(data);
+        chart.append("text")
+            .attr("transform", `translate(${width / 2}, ${height + margin.top * 0.7})`)
+            .style("text-anchor", "middle")
+            .text("Frequency");
 
-    bar.enter().append("rect")
-        .attr("class", "bar")
-        .attr("height", y.rangeBand() - 1)
-        .attr("x", 1)
-        .attr("y", (d, i) => y(i))
-        .attr("width", d => x(d))
-        .attr("fill", (d, i) => i === data.length - 1 ? "rgb(232, 190, 100)" :
-            "#ccc");
+        chart.append('g')
+            .attr('class', 'y axis')
+            .call(yAxis)
 
-    bar.attr("y", (d, i) => y(i))
-        .attr("width", d => x(d));
+        chart.append("text")
+            .attr("transform", `translate(-${margin.left / 2}, ${height / 2})rotate(-90)`)
+            .style("text-anchor", "middle")
+            .text(title);
+
+        this.update(values);
+        let pct = 1 / (1 << (values.length - 1));
+        chart.append("line")
+            .attr("stroke", "#000")
+            .attr("stroke-dasharray", "3")
+            .attr("x1", x(pct))
+            .attr("y1", 0)
+            .attr("x2", x(pct))
+            .attr("y2", height);
+    }
+
+    update(data) {
+        const bar = this.chart.selectAll(".bar")
+            .data(data),
+            x = this.x,
+            y = this.y;
+
+        bar.enter().append("rect")
+            .attr("class", "bar")
+            .attr("height", y.rangeBand() - 1)
+            .attr("x", 1)
+            .attr("y", (d, i) => y(i))
+            .attr("width", d => x(d))
+            .attr("fill", (d, i) => i === data.length - 1 ?
+                "rgb(232, 190, 100)" : "#ccc");
+
+        bar.attr("y", (d, i) => y(i))
+            .attr("width", d => x(d));
+    }
+
 }
 
 function coin_example() {
-    const ncoins = $("#coins .coin").length;
-    graph_init(new Array(ncoins + 1).fill(0), "#coingraph");
-    const ch = csp.chan();
-    csp.takeAsync(csp.spawn(coin_casino(ch)), x => console.log(x));
+    const ncoins = $("#coins .coin").length,
+        ch = csp.chan(),
+        graph = new Graph(ncoins, "#coingraph", "Heads");
+    csp.takeAsync(csp.spawn(coin_casino(graph, ch)), x => console.log(x));
     csp.takeAsync(csp.spawn(tosser("#coinbuttons", ch)), x => console.log(x));
 }
 
-function* sha1_casino(tossch) {
+function* sha1_casino(graph, tossch) {
+    const coins = $("#coins .coin"),
+        ncoins = coins.length,
+        input = $("#sha1block input"),
+        payload = "Mary had a little lamb",
+        tweakch = listen(input[0], 'blur');
+    
+    let wins = 0,
+        trials = 0,
+        hist = new Array(ncoins + 1).fill(0),
+        current = [],
+        sum = 0,
+        tweak = 0,
+        msg,
+        sha1sum = sha1(`${payload}${tweak}`);
+
+    render_reset();
+    while (true) {
+        const r = yield csp.alts([tossch, tweakch]);
+        if (r.channel === tossch) {
+            msg = r.value;
+            if (msg === 'reset') {
+                wins = trials = sum = tweak = 0;
+                hist = new Array(ncoins + 1).fill(0);
+                current = [];
+                render_reset();
+                continue;
+            }
+            tweak++;
+            sha1sum = sha1(`${payload}${tweak}`);
+        } else {
+            msg = 'blur';
+            const str = input.val();
+            sha1sum = sha1(`${payload}${str}`);
+        }
+        const shabits = hextobits(sha1sum);
+        current = shabits.slice(0, ncoins);
+        sum = Array.from(current).reduce((x, y) => x + y, 0);
+        hist[sum] = hist[sum] ? hist[sum] + 1 : 1;
+        trials++;
+        if (sum === ncoins) wins++;
+        yield render_toss();
+    }
+
+    function* render_toss() {
+        if (msg !== 'blur') input.val(tweak);
+        $("#sha1-out").html(`&nbsp;${sha1sum}&nbsp;`);
+        const bits = current.map(x => x ? '&#x25CB;' : '&#x25CF;');
+        $(`<div class="slog-entry"><p>${bits.join('')}</p><p>${sha1sum}</p>`)
+            .css('background-color', sum === ncoins ? 'rgba(255,230,143,0.8)' : '#eee')
+            .prependTo($("#sha1log"));
+        $("#sha1result").html(`<h2>Wins: ${wins} / ${trials}</h2><p><i>(expected ${Math.round(1 / (1 << ncoins) * trials)})</i></p>`);
+
+        graph.update(hist.map(x => x / trials));
+    }
+
+    function render_reset() {
+        $("#sha1block span").text(payload);
+        $("#sha1-out").html(`&nbsp;${sha1sum}&nbsp;`);
+        input.val(tweak);
+        $("#sha1log").empty();
+        $("#sha1result").html(`<h2>Wins: ${wins} / ${trials}</h2><p><i>(expected ${Math.round(1 / (1 << ncoins) * trials)})</i></p>`);
+        graph.update(hist);
+    }
+}
+
+function hextobits(str) {
+    const chars = str.split(''),
+        nums = chars.map(x => parseInt(x, 16)),
+        bins = nums.map(x => [8, 4, 2, 1].map(y => x & y ? 1 : 0)),
+        bits = [].concat.apply([], bins);
+    return bits;
 }
 
 function sha1_example() {
-    const ncoins = $("#coins .coin").length;
-    graph_init(new Array(ncoins + 1).fill(0), "#sha1graph");
-    const ch = csp.chan();
-    csp.takeAsync(csp.spawn(sha1_casino(ch)), x => console.log(x));
+    const ncoins = $("#coins .coin").length,
+        ch = csp.chan(),
+        graph = new Graph(ncoins, "#sha1graph", "0s in leading n bits");
+    csp.takeAsync(csp.spawn(sha1_casino(graph, ch)), x => console.log(x));
     csp.takeAsync(csp.spawn(tosser("#sha1buttons", ch)), x => console.log(x));
 }
 
@@ -276,5 +351,5 @@ function get_random() {
 $(document).ready(function() {
     blockchain_example();
     coin_example();
-//    sha1_example();
+    sha1_example();
 });

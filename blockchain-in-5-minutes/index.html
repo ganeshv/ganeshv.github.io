@@ -91,6 +91,9 @@ But we don't like the idea of God playing dice. Instead, we run a decentralized 
                 <div class="coin">
                 <img src="img/tails.png">
                 </div>
+                <div class="coin">
+                <img src="img/tails.png">
+                </div>
             </div>
             <div class="clog" id="coinlog">
             </div>
@@ -105,23 +108,20 @@ But we don't like the idea of God playing dice. Instead, we run a decentralized 
     </div>
     <div class="ccontainer">
         <div class="cbuttons" id="sha1buttons">
-            <button id="tweak1">Tweak 1</button>
-            <button id="tweak100">Tweak 100</button>
-            <button id="wresetbutton">Reset</button>
+            <button class="toss1">Tweak 1</button>
+            <button class="toss100">Tweak 100</button>
+            <button class="resetbutton">Reset</button>
         </div>
-        <div class="cblock">
+        <div class="cblock" id="sha1block">
             <div class="sha1">
-            <p><strong>sha1(</strong>Mary had a little lamb <input name="tweak" type="text" size="4"><strong>)</strong></p>
-            <p id="shasum"><strong><i>= 498r92420u402u40</i></strong></p>
+            <p><strong>sha1(</strong><span></span><input name="tweak" type="text" size="4"><strong>)</strong></p>
+            <p id="sha1-out" ></p>
             </div>
-            <div class="clog slog">
-                <p><strong>&#x25CF;&#x25CF;&#x25CB;&#x25CB; 498r92420u402u40</strong></p>
-                <p><strong>&#x25CF;&#x25CF;&#x25CB;&#x25CB; 498r92420u402u40</strong></p>
-                <p><strong>&#x25CF;&#x25CF;&#x25CB;&#x25CB; 498r92420u402u40</strong></p>
+            <div class="clog slog" id="sha1log">
             </div>
         </div>
         <div class="resultblock">
-            <div class="cresult">
+            <div class="cresult" id="sha1result">
             </div>
             <div class="cgraph" id="sha1graph">
                 <svg></svg>

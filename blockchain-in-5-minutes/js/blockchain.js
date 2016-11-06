@@ -1991,6 +1991,10 @@ module.exports = Array.isArray || function (arr) {
 },{"buffer":2,"charenc":3,"crypt":4}],8:[function(require,module,exports){
 "use strict";
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var _marked = [run_block, tosser, coin_casino, sha1_casino].map(regeneratorRuntime.mark);
 
 var sha1 = require('sha1'),
@@ -2166,7 +2170,7 @@ function tosser(container, outch) {
     }, _marked[1], this);
 }
 
-function coin_casino(tossch) {
+function coin_casino(graph, tossch) {
     var _marked2, coins, ncoins, heads, tails, blur, wins, trials, hist, current, sum, msg, render_toss, render_reset;
 
     return regeneratorRuntime.wrap(function coin_casino$(_context4) {
@@ -2175,8 +2179,8 @@ function coin_casino(tossch) {
                 case 0:
                     render_reset = function render_reset() {
                         $("#coinlog").empty();
-                        $("#coinresult").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / 32 * trials) + ")</i></p>");
-                        graph_update(hist);
+                        $("#coinresult").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / (1 << ncoins) * trials) + ")</i></p>");
+                        graph.update(hist);
                     };
 
                     render_toss = function render_toss() {
@@ -2202,7 +2206,7 @@ function coin_casino(tossch) {
                                         $("#coins").clone().removeAttr('id').css('background-color', sum === ncoins ? '#fff' : '#ddd').css('opacity', sum === ncoins ? '1.0' : '0.5').prependTo($("#coinlog"));
                                         $("#coinresult").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / (1 << ncoins) * trials) + ")</i></p>");
 
-                                        graph_update(hist.map(function (x) {
+                                        graph.update(hist.map(function (x) {
                                             return x / trials;
                                         }));
 
@@ -2272,63 +2276,71 @@ function coin_casino(tossch) {
     }, _marked[2], this);
 }
 
-var x = void 0,
-    y = void 0,
-    chart = void 0;
+var Graph = function () {
+    function Graph(ncoins, divspec, title) {
+        _classCallCheck(this, Graph);
 
-function graph_init(values, divspec) {
-    var outer_width = $(divspec).width(),
-        outer_height = $(divspec).height(),
-        margin = { top: 40, left: 40 },
-        width = outer_width - margin.left * 2,
-        height = outer_height - margin.top * 2;
+        var outer_width = $(divspec).width(),
+            outer_height = $(divspec).height(),
+            margin = { top: 40, left: 40 },
+            values = new Array(ncoins + 1).fill(0),
+            width = outer_width - margin.left * 2,
+            height = outer_height - margin.top * 2;
 
-    x = d3.scale.linear().domain([0, 1]).range([0, width]);
+        var x = this.x = d3.scale.linear().domain([0, 1]).range([0, width]);
 
-    y = d3.scale.ordinal().domain(d3.range(values.length)).rangeRoundBands([0, height]);
+        var y = this.y = d3.scale.ordinal().domain(d3.range(values.length)).rangeRoundBands([0, height]);
 
-    var xAxis = d3.svg.axis().scale(x).orient('bottom').ticks(10, "%");
+        var xAxis = d3.svg.axis().scale(x).orient('bottom').ticks(10, "%");
 
-    var yAxis = d3.svg.axis().scale(y).orient('left');
+        var yAxis = d3.svg.axis().scale(y).orient('left');
 
-    chart = d3.select(divspec + " svg").attr("width", outer_width).attr("height", outer_height).append("g").attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
+        var chart = this.chart = d3.select(divspec + " svg").attr("width", outer_width).attr("height", outer_height).append("g").attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
 
-    chart.append('g').attr('class', 'x axis').attr("transform", "translate(0, " + height + ")").call(xAxis);
+        chart.append('g').attr('class', 'x axis').attr("transform", "translate(0, " + height + ")").call(xAxis);
 
-    chart.append("text").attr("transform", "translate(" + width / 2 + ", " + (height + margin.top * 0.7) + ")").style("text-anchor", "middle").text("Frequency");
+        chart.append("text").attr("transform", "translate(" + width / 2 + ", " + (height + margin.top * 0.7) + ")").style("text-anchor", "middle").text("Frequency");
 
-    chart.append('g').attr('class', 'y axis').call(yAxis);
+        chart.append('g').attr('class', 'y axis').call(yAxis);
 
-    chart.append("text").attr("transform", "translate(-" + margin.left / 2 + ", " + height / 2 + ")rotate(-90)").style("text-anchor", "middle").text("Number of heads");
+        chart.append("text").attr("transform", "translate(-" + margin.left / 2 + ", " + height / 2 + ")rotate(-90)").style("text-anchor", "middle").text(title);
 
-    graph_update(values);
-    var pct = 1 / (1 << values.length - 1);
-    chart.append("line").attr("stroke", "#000").attr("stroke-dasharray", "3").attr("x1", x(pct)).attr("y1", 0).attr("x2", x(pct)).attr("y2", height);
-}
+        this.update(values);
+        var pct = 1 / (1 << values.length - 1);
+        chart.append("line").attr("stroke", "#000").attr("stroke-dasharray", "3").attr("x1", x(pct)).attr("y1", 0).attr("x2", x(pct)).attr("y2", height);
+    }
 
-function graph_update(data) {
-    var bar = chart.selectAll(".bar").data(data);
+    _createClass(Graph, [{
+        key: "update",
+        value: function update(data) {
+            var bar = this.chart.selectAll(".bar").data(data),
+                x = this.x,
+                y = this.y;
 
-    bar.enter().append("rect").attr("class", "bar").attr("height", y.rangeBand() - 1).attr("x", 1).attr("y", function (d, i) {
-        return y(i);
-    }).attr("width", function (d) {
-        return x(d);
-    }).attr("fill", function (d, i) {
-        return i === data.length - 1 ? "rgb(232, 190, 100)" : "#ccc";
-    });
+            bar.enter().append("rect").attr("class", "bar").attr("height", y.rangeBand() - 1).attr("x", 1).attr("y", function (d, i) {
+                return y(i);
+            }).attr("width", function (d) {
+                return x(d);
+            }).attr("fill", function (d, i) {
+                return i === data.length - 1 ? "rgb(232, 190, 100)" : "#ccc";
+            });
 
-    bar.attr("y", function (d, i) {
-        return y(i);
-    }).attr("width", function (d) {
-        return x(d);
-    });
-}
+            bar.attr("y", function (d, i) {
+                return y(i);
+            }).attr("width", function (d) {
+                return x(d);
+            });
+        }
+    }]);
+
+    return Graph;
+}();
 
 function coin_example() {
-    var ncoins = $("#coins .coin").length;
-    graph_init(new Array(ncoins + 1).fill(0), "#coingraph");
-    var ch = csp.chan();
-    csp.takeAsync(csp.spawn(coin_casino(ch)), function (x) {
+    var ncoins = $("#coins .coin").length,
+        ch = csp.chan(),
+        graph = new Graph(ncoins, "#coingraph", "Heads");
+    csp.takeAsync(csp.spawn(coin_casino(graph, ch)), function (x) {
         return console.log(x);
     });
     csp.takeAsync(csp.spawn(tosser("#coinbuttons", ch)), function (x) {
@@ -2336,23 +2348,142 @@ function coin_example() {
     });
 }
 
-function sha1_casino(tossch) {
-    return regeneratorRuntime.wrap(function sha1_casino$(_context5) {
+function sha1_casino(graph, tossch) {
+    var _marked3, coins, ncoins, input, payload, tweakch, wins, trials, hist, current, sum, tweak, msg, sha1sum, r, str, shabits, render_toss, render_reset;
+
+    return regeneratorRuntime.wrap(function sha1_casino$(_context6) {
         while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context6.prev = _context6.next) {
                 case 0:
+                    render_reset = function render_reset() {
+                        $("#sha1block span").text(payload);
+                        $("#sha1-out").html("&nbsp;" + sha1sum + "&nbsp;");
+                        input.val(tweak);
+                        $("#sha1log").empty();
+                        $("#sha1result").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / (1 << ncoins) * trials) + ")</i></p>");
+                        graph.update(hist);
+                    };
+
+                    render_toss = function render_toss() {
+                        var bits;
+                        return regeneratorRuntime.wrap(function render_toss$(_context5) {
+                            while (1) {
+                                switch (_context5.prev = _context5.next) {
+                                    case 0:
+                                        if (msg !== 'blur') input.val(tweak);
+                                        $("#sha1-out").html("&nbsp;" + sha1sum + "&nbsp;");
+                                        bits = current.map(function (x) {
+                                            return x ? '&#x25CB;' : '&#x25CF;';
+                                        });
+
+                                        $("<div class=\"slog-entry\"><p>" + bits.join('') + "</p><p>" + sha1sum + "</p>").css('background-color', sum === ncoins ? 'rgba(255,230,143,0.8)' : '#eee').prependTo($("#sha1log"));
+                                        $("#sha1result").html("<h2>Wins: " + wins + " / " + trials + "</h2><p><i>(expected " + Math.round(1 / (1 << ncoins) * trials) + ")</i></p>");
+
+                                        graph.update(hist.map(function (x) {
+                                            return x / trials;
+                                        }));
+
+                                    case 6:
+                                    case "end":
+                                        return _context5.stop();
+                                }
+                            }
+                        }, _marked3[0], this);
+                    };
+
+                    _marked3 = [render_toss].map(regeneratorRuntime.mark);
+                    coins = $("#coins .coin"), ncoins = coins.length, input = $("#sha1block input"), payload = "Mary had a little lamb", tweakch = listen(input[0], 'blur');
+                    wins = 0, trials = 0, hist = new Array(ncoins + 1).fill(0), current = [], sum = 0, tweak = 0, msg = void 0, sha1sum = sha1("" + payload + tweak);
+
+
+                    render_reset();
+
+                case 6:
+                    if (!true) {
+                        _context6.next = 35;
+                        break;
+                    }
+
+                    _context6.next = 9;
+                    return csp.alts([tossch, tweakch]);
+
+                case 9:
+                    r = _context6.sent;
+
+                    if (!(r.channel === tossch)) {
+                        _context6.next = 22;
+                        break;
+                    }
+
+                    msg = r.value;
+
+                    if (!(msg === 'reset')) {
+                        _context6.next = 18;
+                        break;
+                    }
+
+                    wins = trials = sum = tweak = 0;
+                    hist = new Array(ncoins + 1).fill(0);
+                    current = [];
+                    render_reset();
+                    return _context6.abrupt("continue", 6);
+
+                case 18:
+                    tweak++;
+                    sha1sum = sha1("" + payload + tweak);
+                    _context6.next = 25;
+                    break;
+
+                case 22:
+                    msg = 'blur';
+                    str = input.val();
+
+                    sha1sum = sha1("" + payload + str);
+
+                case 25:
+                    shabits = hextobits(sha1sum);
+
+                    current = shabits.slice(0, ncoins);
+                    sum = Array.from(current).reduce(function (x, y) {
+                        return x + y;
+                    }, 0);
+                    hist[sum] = hist[sum] ? hist[sum] + 1 : 1;
+                    trials++;
+                    if (sum === ncoins) wins++;
+                    _context6.next = 33;
+                    return render_toss();
+
+                case 33:
+                    _context6.next = 6;
+                    break;
+
+                case 35:
                 case "end":
-                    return _context5.stop();
+                    return _context6.stop();
             }
         }
     }, _marked[3], this);
 }
 
+function hextobits(str) {
+    var chars = str.split(''),
+        nums = chars.map(function (x) {
+        return parseInt(x, 16);
+    }),
+        bins = nums.map(function (x) {
+        return [8, 4, 2, 1].map(function (y) {
+            return x & y ? 1 : 0;
+        });
+    }),
+        bits = [].concat.apply([], bins);
+    return bits;
+}
+
 function sha1_example() {
-    var ncoins = $("#coins .coin").length;
-    graph_init(new Array(ncoins + 1).fill(0), "#sha1graph");
-    var ch = csp.chan();
-    csp.takeAsync(csp.spawn(sha1_casino(ch)), function (x) {
+    var ncoins = $("#coins .coin").length,
+        ch = csp.chan(),
+        graph = new Graph(ncoins, "#sha1graph", "0s in leading n bits");
+    csp.takeAsync(csp.spawn(sha1_casino(graph, ch)), function (x) {
         return console.log(x);
     });
     csp.takeAsync(csp.spawn(tosser("#sha1buttons", ch)), function (x) {
@@ -2369,7 +2500,7 @@ function get_random() {
 $(document).ready(function () {
     blockchain_example();
     coin_example();
-    //    sha1_example();
+    sha1_example();
 });
 
 },{"sha1":7}]},{},[8]);

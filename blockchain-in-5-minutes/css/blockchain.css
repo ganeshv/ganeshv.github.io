@@ -14,7 +14,6 @@
 
 .blockname, .blockparent {
     margin: 0;
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
     max-width: 10em;
@@ -91,9 +90,15 @@
 }
 
 .coin {
+    flex: 1 1;
     margin: 0;
-    width: 4em;
-    height: 4em;
+    max-width: 4em;
+    max-height: 4em;
+}
+
+.coin img {
+    max-width: 100%;
+    height: auto;
 }
 
 .clog {
@@ -145,15 +150,39 @@
 .slog {
     display: flex;
     flex-flow: column;
-    align-items: center;
+    align-items: stretch;
 }
 
 .slog p {
-    margin: 0;
+    margin: auto;
+    font-size: 0.8rem;
+    font-family: monospace;
 }
+
+.slog-entry {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    margin: 0;
+    min-height: 2em;
+    border-bottom: 1px solid #ccc;
+}
+
 .sha1 p, .sha1 input {
     margin: 0;
+    text-overflow: ellipsis;
+    word-break: break-all;
 }
+
+#sha1-out {
+    font-size: 0.8rem;
+    font-family: monospace;
+/*    background-color: rgba(255,230,143,0.8);*/
+    background-color: #eee;
+    border: 1px solid #333;
+    border-radius: 2px;
+}
+
 
 rect {
 /*   stroke: #fff;*/
