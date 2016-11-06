@@ -87,6 +87,14 @@
     margin: 0;
     justify-content: space-around;
     align-items: center;
+    padding: 0.25em;
+}
+
+.clog {
+    flex: 2;
+    border-top: 1px solid #333;
+    margin: 0;
+    overflow: scroll;
 }
 
 .coin {
@@ -101,18 +109,12 @@
     height: auto;
 }
 
-.clog {
-    flex: 2;
-    border-top: 1px solid #333;
-    margin: 0;
-    overflow: scroll;
-}
-
 .cresult {
     flex: 1;
     flex-flow: column;
     display: flex;
     margin: 0;
+    padding: 0.25em;
 }
 
 .cresult h2 {
@@ -142,8 +144,10 @@
     display: flex;
     flex-flow: row wrap;
     margin: 0;
-    justify-content: center;
+    padding: 0.25em;
+    justify-content: space-around;
     align-items: center;
+    overflow: scroll;
 }
 
 
@@ -170,8 +174,6 @@
 
 .sha1 p, .sha1 input {
     margin: 0;
-    text-overflow: ellipsis;
-    word-break: break-all;
 }
 
 #sha1-out {
@@ -181,6 +183,9 @@
     background-color: #eee;
     border: 1px solid #333;
     border-radius: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 
@@ -193,4 +198,38 @@ rect {
     fill: none;
     stroke: #000;
     shape-rendering: crispEdges;
+}
+
+@media (max-width: 54em) {
+    .ccontainer {
+        flex-flow: column;
+        height: auto;
+    }
+    .cbuttons {
+        padding: 0.5em;
+        border-bottom: 1px solid #333;
+        border-right: none;
+        flex-flow: row;
+        margin: 0;
+    }
+
+    .cbuttons button.resetbutton {
+        margin-left: auto;
+    }
+    .cbuttons button {
+        margin: 0 0.5em;
+    }
+    .clog {
+        max-height: 12em;
+    }
+    .resultblock {
+        flex-flow: row nowrap;
+    }
+    .cgraph {
+        flex: 1;
+        border-top: none;
+    }
+}
+
+@media (min-width: 50em) {
 }

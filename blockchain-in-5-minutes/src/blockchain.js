@@ -171,10 +171,10 @@ class Graph {
     constructor(ncoins, divspec, title) {
         let outer_width = $(divspec).width(),
             outer_height = $(divspec).height(),
-            margin = {top: 40, left: 40},
+            margin = {top: 20, left: 40, right: 20, bottom: 40},
             values = new Array(ncoins + 1).fill(0),
-            width = outer_width - margin.left * 2,
-            height = outer_height - margin.top * 2;
+            width = outer_width - margin.left - margin.right,
+            height = outer_height - margin.top - margin.bottom;
      
         let x = this.x = d3.scale.linear()
             .domain([0, 1])
@@ -207,7 +207,7 @@ class Graph {
 
 
         chart.append("text")
-            .attr("transform", `translate(${width / 2}, ${height + margin.top * 0.7})`)
+            .attr("transform", `translate(${width / 2}, ${height + margin.bottom * 0.7})`)
             .style("text-anchor", "middle")
             .text("Frequency");
 

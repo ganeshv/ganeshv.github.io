@@ -2282,10 +2282,10 @@ var Graph = function () {
 
         var outer_width = $(divspec).width(),
             outer_height = $(divspec).height(),
-            margin = { top: 40, left: 40 },
+            margin = { top: 20, left: 40, right: 20, bottom: 40 },
             values = new Array(ncoins + 1).fill(0),
-            width = outer_width - margin.left * 2,
-            height = outer_height - margin.top * 2;
+            width = outer_width - margin.left - margin.right,
+            height = outer_height - margin.top - margin.bottom;
 
         var x = this.x = d3.scale.linear().domain([0, 1]).range([0, width]);
 
@@ -2299,7 +2299,7 @@ var Graph = function () {
 
         chart.append('g').attr('class', 'x axis').attr("transform", "translate(0, " + height + ")").call(xAxis);
 
-        chart.append("text").attr("transform", "translate(" + width / 2 + ", " + (height + margin.top * 0.7) + ")").style("text-anchor", "middle").text("Frequency");
+        chart.append("text").attr("transform", "translate(" + width / 2 + ", " + (height + margin.bottom * 0.7) + ")").style("text-anchor", "middle").text("Frequency");
 
         chart.append('g').attr('class', 'y axis').call(yAxis);
 
