@@ -297,7 +297,7 @@ function* sha1_casino(graph, tossch) {
         }
         const shabits = hextobits(sha1sum);
         current = shabits.slice(0, ncoins);
-        sum = Array.from(current).reduce((x, y) => x + y, 0);
+        sum = ncoins - Array.from(current).reduce((x, y) => x + y, 0);
         hist[sum] = hist[sum] ? hist[sum] + 1 : 1;
         trials++;
         if (sum === ncoins) wins++;
