@@ -1,15 +1,22 @@
-.container {
+.gcontainer {
     font-size: 16px;
-    height: 10em;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-begin;
+    align-items: center;
 }
 
 .gitblock {
-    display: inline-block;
+    display: flex;
+    justify-content: space-around;
+    flex-flow: column;
     width: 10em;
+    height: 10em;
     border: 1px solid #333;
     border-radius: 3px;
     background-color: #ddd;
     padding: 0.5em;
+    margin: 0.5em;
 }
 
 .blockname, .blockparent {
@@ -21,9 +28,8 @@
 
 .blockarrow {
     font-size: 24px;
-    display: inline-block;
     width: 1em;
-    vertical-align: 80px;
+    margin: 0;
 }
 
 .gitblock textarea {
