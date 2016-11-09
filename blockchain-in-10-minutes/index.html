@@ -42,7 +42,7 @@ A blockchain is a public, append-only transaction log. Anonymous, untrusted part
     </p>
 
     <p>
-    In computer science terms, blockchains are a practical solution to the <a href="https://en.wikipedia.org/wiki/Consensus_(computer_science)">distributed consensus problem</a>. This, like the <a href="http://hitchhikers.wikia.com/wiki/Infinite_Improbability_Drive">Infinite Improbability Drive</a> was considered <em>almost</em> impossible. Then one day, young Satoshi brewed a cup of really hot tea&hellip;
+    In computer science terms, blockchains are a practical solution to the <a href="https://en.wikipedia.org/wiki/Consensus_(computer_science)">distributed consensus problem</a>. This, like the <a href="http://hitchhikers.wikia.com/wiki/Infinite_Improbability_Drive">Infinite Improbability Drive</a>, was considered <em>almost</em> impossible. Then one day, young Satoshi brewed a cup of really hot tea&hellip;
     </p>
 
     <p>
@@ -77,7 +77,7 @@ So there are limits to the BDFL's power: they cannot change history or commit sp
 Which of the maintainers in this anarchist paradise gets to issue the next commit, and how does everyone agree? All maintainers will have perfectly valid candidate blocks. This is the great distributed consensus problem. Made much worse by the fact that participants don't have an identity, join and leave when they like, there is no global time, messages can get reordered, etc. etc.
     </p>
     <p>
-Well, suppose God rolls dice and anoints a lucky maintainer as BDFL-du-jour, and the chosen one commits the next block to universal acclaim. Everybody updates their blockchain with the latest commit, and after a few minutes, God rolls again. (In the future, everyone will be dictator for 15 minutes.)
+Well, suppose God rolls dice and anoints a lucky maintainer as BDFL-du-jour, and the chosen one commits the next block to universal acclaim. Everybody updates their blockchain with the latest commit. After waiting a few minutes to make sure everybody gets the message, God rolls again. (In the future, everyone will be dictator for 15 minutes.)
     </p>
 
     <p>
@@ -173,26 +173,26 @@ But we don't like the idea of God playing dice. Instead, we run a decentralized 
     We aren't going to discuss what gets stored in blocks and the transaction rules, because they are orthogonal to our central discussion: the mechanics of adding a block. So long as the miners agree on data format and transaction rules and validate proposed blocks against existing blockchain state, we are fine.
     </p>
     <p>
-    This is what the Bitcoin blockchain looks like today:
+    This is what the Bitcoin blockchain looks like around late 2016:
     </p>
 
     <p>
-    <a href="https://blockexplorer.com/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f">000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f (Genesis)</a> &#8594;  <a href="https://blockexplorer.com/block/00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048">00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048</a> &#8594; <br>&hellip;(~417,000 blocks later)&hellip; <a href="https://blockexplorer.com/block/000000000000000000fb5c0704b121a50e67d19e4d75af0ba88aeaa34511eb6f">000000000000000000fb5c0704b121a50e67d19e4d75af0ba88aeaa34511eb6f</a> &#8594; <a href="https://blockexplorer.com/block/000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398">000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398</a> &#8594; <a href="https://blockexplorer.com/block/000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398">000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398</a>
+    <a href="https://blockexplorer.com/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f">000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f (1st block)</a> &#8594;  <a href="https://blockexplorer.com/block/00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048">00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048</a> &#8594; <br>&hellip;(~417,000 blocks later)&hellip; <a href="https://blockexplorer.com/block/000000000000000000fb5c0704b121a50e67d19e4d75af0ba88aeaa34511eb6f">000000000000000000fb5c0704b121a50e67d19e4d75af0ba88aeaa34511eb6f</a> &#8594; <a href="https://blockexplorer.com/block/000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398">000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398</a> &#8594; <a href="https://blockexplorer.com/block/000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398">000000000000000001eb2f52e3df222211a8f45480d958ebd6702f5fa2bc5398</a>
     </p>
     <p>
     Note that the zero prefix requirement has gone up from ~32 bits in 2009 to ~72 in 2016, each additional bit representing a doubling of difficulty and a corresponding increase in mining power and popularity<sup><a href="#footnote_1">1</a></sup>.
     </p>
 
     <p>
-    Of the six impossible things Satoshi did to create Bitcoin, this is the greatest and most hilarious: to achieve distributed consensus, <em>slow down</em> the commit rate with a self-scaling lottery, so blocks are found and appended one at a time. Combined with the longest-chain rule and the tamper-proof nature of the blockchain, we get an inexorable Moving Finger, an arrow-of-time, the same simple mechanisms defending against both subversion and race conditions.
+    Of the six impossible things Satoshi did to create Bitcoin, this is the greatest and most hilarious: to achieve distributed consensus, <em>slow down</em> the commit rate with a self-scaling lottery, so blocks are found and appended one at a time. Combined with the longest-chain rule and the tamper-proof nature of the blockchain, we get an inexorable Moving Finger, an arrow-of-time, with the same simple mechanisms defending against both subversion and race conditions.
     </p>
 
     <p>
-Distributed systems tend to be complex beasts with lots of edge cases and error recovery mechanisms. Satoshi comes along and invents a much simpler system which works under more challenging conditions. He throws out all the epicycles, synchronization mechanisms, co-ordinators, multi-phase commits, blah blah, and achieves consensus by doing exactly opposite to what the sacred values of throughput and efficiency demand, i.e. drastically reduce transactions/sec by burning up CPU.
+Distributed systems tend to be complex beasts with lots of edge cases and error recovery mechanisms. Satoshi's blockchain is a much simpler system which works under more challenging conditions. He throws out all the epicycles, synchronization mechanisms, co-ordinators, multi-phase commits, blah blah, and achieves consensus by doing exactly opposite to what the sacred values of throughput and efficiency demand, i.e. drastically reduce transactions/sec by burning up CPU.
     </p>
 
     <p>
-Rather wisely, Satoshi has decided to remain anonymous and forego any Galactic Prize for Extreme Cleverness or he'd have been lynched by a rampaging mob of distributed systems researchers.
+Rather wisely, Satoshi has decided to remain anonymous and forego any Galactic Prize for Extreme Cleverness, or he'd have been lynched by a rampaging mob of distributed systems researchers.
     </p>
 
   </article>
@@ -200,7 +200,7 @@ Rather wisely, Satoshi has decided to remain anonymous and forego any Galactic P
     <section>
     <h3>Footnotes</h3>
     <ol>
-    <li id="footnote_1">Technically, Bitcoin uses a slightly different, more flexible &lsquo;difficulty&rsquo; function than a straight <em>n zero leading bits</em> but close enough in spirit for the explanation to stand.</li>
+    <li id="footnote_1">Technically, Bitcoin uses a slightly different, more flexible &lsquo;difficulty&rsquo; function than a straight <em>n zero leading bits</em>, but it is close enough in spirit for the explanation to stand.</li>
     </ol>
     </section>
   <footer>
